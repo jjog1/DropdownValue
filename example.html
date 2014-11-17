@@ -1,0 +1,27 @@
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="dist/css/bootstrap.css" />
+		<link rel="stylesheet" type="text/css" href="style.css"/>
+	</head>
+	<body>
+	<div style="width:300px; margin-right:auto;margin-left:auto;padding-top:100px;">
+		<select id="mydropdown">
+			<option value="1">Item 1</option>
+			<option value="2">Item 2</option>
+			<option value="3">Item 3</option>
+			<option value="4">Item 4</option>
+			<option value="5">Item 5</option>
+			<option value="6">Item 6</option>
+		</select>
+	</div>	
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>	
+	<script src="ValueSearchDropdown.js"></script>
+	<script>
+	$(function () {
+		$('#mydropdown').ValueSelectBox('init');
+	});
+
+	</script>
+	
+	</body>
+</html>
