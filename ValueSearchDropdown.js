@@ -1,28 +1,27 @@
 (function ($) {
-var dropdownId;
 var methods = {
 	init: function (){
-        dropdownId = this.attr("id");
+        var dropdownId = this.attr("id");
 		
 		//Start container
-		var newBox = '<div class="fullcontainer">'
+		var newBox = '<div id="'+ dropdownId + '-container" class="fullcontainer">'
 		
 		//Start inputcontainer
 		newBox += '<div class="dropdownboxcontainer">'
 		
-		newBox += '<input type="textbox" id="textbox" class="dropdowntextbox" onkeyup="PredictFromText(this, ' + '#dropdownbox' + ');" style=""/>';
-		newBox += '<div class="glyphicon glyphicon-chevron-down" onclick="displayDropdown('+'#dropdownbox'+');"></div>';
-		newBox += '<input type="textbox" id="valueBox" class="dropdownvaluebox" onkeyup="PredictFromValue(this,'+'#dropdownbox'+');">';
+		newBox += '<input type="textbox" id="'+ dropdownId + '-textbox" class="dropdowntextbox"/>';
+		newBox += '<div class="glyphicon glyphicon-chevron-down"></div>';
+		newBox += '<input type="textbox" id="'+ dropdownId + '-valueBox" class="dropdownvaluebox">';
 		//Close inputcontainer
 		newBox += '</div>'
 		
 		//Add dropdown box
-		newBox+= '<div id="dropdownbox" class="dropdownlistbox"><ul>';
+		newBox+= '<div id="'+ dropdownId + '-dropdownbox" class="dropdownlistbox"><ul>';
 		
 		var o = this[0].options;
 		for (var x = 0; x < o.length; x++)
         {
-			newBox += '<li data-value="'+ o[x].value + '" class="newdropdownitem" onclick="$('+'#textbox'+').val('+o[x].text+');$('+'#valueBox'+').val('+o[x].value+')">'+o[x].text+'</li>';
+			newBox += '<li data-value="'+ o[x].value + '" class="newdropdownitem" onclick="$(#'+ dropdownId + 'textbox'+').val('+o[x].text+');$(#'+ dropdownId + '-valueBox'+').val('+o[x].value+')">'+o[x].text+'</li>';
 		}
 		//Close dropdown box
 		newBox+= '</ul></div>';
@@ -34,21 +33,21 @@ var methods = {
 		//$('#'+dropdownId).hide();
 		
 		
-		$('#textbox').bind("keyup", function(){
-			$(dropdownId).ValueSelectBox('predictFromText', $('#textbox'),'#dropdownbox');
+		$('#'+ dropdownId + '-textbox').bind("keyup", function(){
+			$(dropdownId).ValueSelectBox('predictFromText', $('#'+ dropdownId + '-textbox'),'#'+ dropdownId + '-dropdownbox');
 		});
 		
-		$('.dropdownboxcontainer div').bind("click", function(){
+		$('#'+ dropdownId + '-container .dropdownboxcontainer div').bind("click", function(){
 			$(this).toggleClass("glyphicon glyphicon-chevron-down").toggleClass("glyphicon glyphicon-chevron-up");
-			$(dropdownId).ValueSelectBox('show','#dropdownbox');
+			$(dropdownId).ValueSelectBox('show','#'+ dropdownId + '-dropdownbox');
 		});
 		
-		$('#valueBox').bind("keyup", function(){
-			$(dropdownId).ValueSelectBox('predictFromValue', $('#valueBox'),'#dropdownbox');
+		$('#'+ dropdownId + '-valueBox').bind("keyup", function(){
+			$(dropdownId).ValueSelectBox('predictFromValue', $('#'+ dropdownId + '-valueBox'),'#'+ dropdownId + '-dropdownbox');
 		});
 		
-		$('.newdropdownitem').bind("click",function(){
-			$(dropdownId).ValueSelectBox('populate', this);
+		$('#'+ dropdownId + '-container .newdropdownitem').bind("click",function(){
+			$(dropdownId).ValueSelectBox('populate', this, dropdownId);
 		});
     },
 	predictFromText: function (element, elementbox) {
@@ -80,16 +79,16 @@ var methods = {
         }
     }
 	},
-	populate: function displayDropdown(element){
-		$('#textbox').val(element.innerHTML);
-		$('#valueBox').val(element.getAttribute("data-value"));
+	populate: function (element, dropId){
+		$('#'+ dropId + '-textbox').val(element.innerHTML);
+		$('#'+ dropId + '-valueBox').val(element.getAttribute("data-value"));
 		
-		$('#'+ dropdownId).val(element.getAttribute("data-value"));
+		$('#'+ dropId).val(element.getAttribute("data-value"));
 	},
-	show: function displayDropdown(dropdownId){
-		$(dropdownId).toggle();
-		$('.dropdownboxcontainer').toggleClass("opendropdownbox");
-		var o =  $(dropdownId + " ul li");
+	show: function displayDropdown(dropId){
+		$(dropId).toggle();
+		$(''+ dropId + '-container .dropdownboxcontainer').toggleClass("opendropdownbox");
+		var o =  $(dropId + " ul li");
 		o.each(function() { 
             this.hidden = false;
 		});
@@ -98,6 +97,8 @@ var methods = {
     
 $.fn.ValueSelectBox = function(method) {
         if ( methods[method] ) {
+			//Gets the function from the map.
+			//Apply executes the function (this) with the associated parameters
             return methods[ method ].apply( this, Array.prototype.slice.call( arguments, 1 ));
         } else if ( typeof method === 'object' || ! methods ) {
             return methods.init.apply( this, arguments );

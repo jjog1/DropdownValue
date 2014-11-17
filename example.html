@@ -14,11 +14,26 @@
 			<option value="6">Item 6</option>
 		</select>
 	</div>	
+	
+	
+	<div style="width:300px; margin-right:auto;margin-left:auto;padding-top:100px;">
+		<select id="mydropdown2">
+			<option value="CE">Cool eggs</option>
+			<option value="KT">King Time</option>
+			<option value="EE">East of Easter</option>
+			<option value="ME">Merry Easter</option>
+			<option value="FU">Fun uptown</option>
+			<option value="TT">Timeland travel</option>
+		</select>
+	</div>	
+	
+	
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>	
 	<script src="ValueSearchDropdown.js"></script>
 	<script>
 	$(function () {
 		$('#mydropdown').ValueSelectBox('init');
+		$('#mydropdown2').ValueSelectBox('init');
 	});
 
 	</script>
