@@ -62,3 +62,15 @@
 	border-bottom-left-radius: 0;
 	border-bottom-right-radius: 0;
 }
+
+.newdropdownitem{
+	cursor:pointer;
+}
+
+.newdropdownitem:hover{
+	background-color:lightgrey;
+}
+
+.selectedItem{
+	background-color:cyan;
+}

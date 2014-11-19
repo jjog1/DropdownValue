@@ -32,9 +32,9 @@ var methods = {
 		
 		//$('#'+dropdownId).hide();
 		
-		
-		$('#'+ dropdownId + '-textbox').bind("keyup", function(){
-			$(dropdownId).ValueSelectBox('predictFromText', $('#'+ dropdownId + '-textbox'),'#'+ dropdownId + '-dropdownbox');
+
+		$('#'+ dropdownId + '-textbox').bind("keyup", function(e){
+			$(dropdownId).ValueSelectBox('predictFromText', $('#'+ dropdownId + '-textbox'),dropdownId, e);
 		});
 		
 		$('#'+ dropdownId + '-container .dropdownboxcontainer div').bind("click", function(){
@@ -42,57 +42,123 @@ var methods = {
 			$(dropdownId).ValueSelectBox('show','#'+ dropdownId + '-dropdownbox');
 		});
 		
-		$('#'+ dropdownId + '-valueBox').bind("keyup", function(){
-			$(dropdownId).ValueSelectBox('predictFromValue', $('#'+ dropdownId + '-valueBox'),'#'+ dropdownId + '-dropdownbox');
+		$('#'+ dropdownId + '-valueBox').bind("keyup", function(e){
+			$(dropdownId).ValueSelectBox('predictFromValue', $('#'+ dropdownId + '-valueBox'),dropdownId, e.keyCode);
 		});
 		
 		$('#'+ dropdownId + '-container .newdropdownitem').bind("click",function(){
 			$(dropdownId).ValueSelectBox('populate', this, dropdownId);
 		});
+		
+		$('#'+ dropdownId + '-container').bind("keyup", function(e){
+			$(dropdownId).ValueSelectBox('changeSelect', dropdownId, e);
+		});	
     },
-	predictFromText: function (element, elementbox) {
+	predictFromText: function (element, elementId, e) {
 		//The regular expression to match the value to the value entered
 		//in the textbox
-		$(elementbox).show();
+		$('#'+elementId +'-dropdownbox').show();
 		var reg = new RegExp(element[0].value, "i");
-		var o =  $(elementbox + " ul li");
+		
+		var o =  $('#'+elementId +'-dropdownbox' + " ul li");
+
 		for (var index = 0; index < o.length; index++){ 
 			var x = o[index].innerText.trim();
 			if (reg.test(x)) {
+				if(e.keyCode == 13)
+				{
+					$('#'+elementId +'-dropdownbox').hide();
+					$('#'+ elementId + '-textbox').val(o[index].innerHTML);
+					$('#'+ elementId + '-valueBox').val(o[index].getAttribute("data-value"));
+					$('#'+ elementId).val(o[index].getAttribute("data-value"));
+					break;
+				}
 				o[index].hidden = false;
 			}else{
 				o[index].hidden = true;
 			}
 		}
 	},
-	predictFromValue:function PredictFromValue(element, elementbox) {
-    //The regular expression to match the value to the value entered
+	predictFromValue:function PredictFromValue(element, elementId, keycode) {
+    var o =  $('#'+elementId +'-dropdownbox'+ " ul li");
+	if(keycode == 13)
+	{
+		for (var index = 0; index < o.length; index++){  
+			if (element[0].value == o[index].getAttribute("data-value")) {
+				$('#'+elementId +'-dropdownbox').hide();
+				$('#'+ elementId + '-textbox').val(o[index].innerHTML);
+				$('#'+ elementId).val(element.getAttribute("data-value"));
+			}
+			}
+	}
+	else
+	{//The regular expression to match the value to the value entered
     //in the textbox
-	$(elementbox).show();
-    var reg = new RegExp('^' + element[0].value, "i");
-    var o =  $(elementbox + " ul li");
-	for (var index = 0; index < o.length; index++){  
-        if (reg.test(o[index].getAttribute("data-value"))) {
-            o[index].hidden = false;
-        }else{
-            o[index].hidden = true;
-        }
-    }
+		$('#'+elementId +'-dropdownbox').show();
+		var reg = new RegExp('^' + element[0].value, "i");
+
+		for (var index = 0; index < o.length; index++){  
+			if (reg.test(o[index].getAttribute("data-value"))) {
+				o[index].hidden = false;
+			}else{
+				o[index].hidden = true;
+			}
+		}
+	}
 	},
 	populate: function (element, dropId){
 		$('#'+ dropId + '-textbox').val(element.innerHTML);
 		$('#'+ dropId + '-valueBox').val(element.getAttribute("data-value"));
-		
 		$('#'+ dropId).val(element.getAttribute("data-value"));
+		$('#'+ dropId +'-dropdownbox').toggle();
+		$('#'+ dropId + '-container .dropdownboxcontainer div').toggleClass("glyphicon glyphicon-chevron-down").toggleClass("glyphicon glyphicon-chevron-up");
 	},
-	show: function displayDropdown(dropId){
+	show: function (dropId){
 		$(dropId).toggle();
 		$(''+ dropId + '-container .dropdownboxcontainer').toggleClass("opendropdownbox");
 		var o =  $(dropId + " ul li");
 		o.each(function() { 
             this.hidden = false;
 		});
-	}	
+	},
+	changeSelect: function (elementId, e) {
+
+		$('#'+elementId +'-dropdownbox').show();
+		
+		var o =  $('#'+elementId +'-dropdownbox' + " ul li");
+		
+		if(e.keyCode == 40 )
+		{
+			var selectedRow = $('#'+elementId +'-dropdownbox' + " ul .selectedItem");
+
+			if(selectedRow.length == 0)
+			{
+				o[0].className +=" selectedItem";
+				$('#'+ elementId + '-container .dropdownboxcontainer div').toggleClass("glyphicon glyphicon-chevron-down").toggleClass("glyphicon glyphicon-chevron-up");
+			}
+			else{
+				
+				var next =  $('#'+elementId +'-dropdownbox' + " ul .selectedItem").first().next("li:visible");
+				next[0].className +=" selectedItem";
+				selectedRow[0].className = selectedRow[0].className.replace('selectedItem','');
+			}
+		}
+		
+		if(e.keyCode == 38)
+		{
+			var selectedRow = $('#'+elementId +'-dropdownbox' + " ul .selectedItem");
+
+			if(selectedRow.length != 0)
+			{
+				var next =  $('#'+elementId +'-dropdownbox' + " ul .selectedItem").first().prev("li:visible");
+				if(next.length != 0)
+				{
+					next[0].className +=" selectedItem";
+					selectedRow[0].className = selectedRow[0].className.replace('selectedItem','');
+				}
+			}
+		}
+	}
 	};
     
 $.fn.ValueSelectBox = function(method) {
