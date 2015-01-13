@@ -30,7 +30,7 @@ var methods = {
       
         this.replaceWith(newBox + this[0].outerHTML);
 		
-		//$('#'+dropdownId).hide();
+		$('#'+dropdownId).hide();
 		
 
 		$('#'+ dropdownId + '-textbox').bind("keyup", function(e){
