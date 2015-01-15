@@ -2,16 +2,17 @@
     var methods = {
         init: function () {
             var dropdownId = this.attr("id");
-
+            var sText = $('#'+dropdownId+' :selected').text();
+            var sValue = this.val();
             //Start container
             var newBox = '<div id="' + dropdownId + '-container" class="fullcontainer">'
 
             //Start inputcontainer
             newBox += '<div class="dropdownboxcontainer">'
 
-            newBox += '<input type="textbox" id="' + dropdownId + '-textbox" class="dropdowntextbox"/>';
+            newBox += '<input type="textbox" id="' + dropdownId + '-textbox" class="dropdowntextbox" value="'+sText+'"/>';
             newBox += '<div class="glyphicon glyphicon-chevron-down"></div>';
-            newBox += '<input type="textbox" id="' + dropdownId + '-valueBox" class="dropdownvaluebox">';
+            newBox += '<input type="textbox" id="' + dropdownId + '-valueBox" class="dropdownvaluebox" value="'+sValue+'">';
             //Close inputcontainer
             newBox += '</div>'
 
@@ -62,6 +63,13 @@
 
             $('#' + dropdownId + '-container').bind("keyup", function (e) {
                 $(dropdownId).ValueSelectBox('changeSelect', dropdownId, e);
+            });
+
+            $('#' + dropdownId + '-valueBox').blur(function (e) {
+                $('#' + dropdownId + '-dropdownbox').hide();
+            });
+            $('#' + dropdownId + '-textbox').blur(function (e) {
+                $('#' + dropdownId + '-dropdownbox').hide();
             });
         },
         predictFromText: function (element, elementId, e) {
