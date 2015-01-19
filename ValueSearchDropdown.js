@@ -27,9 +27,11 @@
 
             var o = this[0].options;
             for (var x = 0; x < o.length; x++) {
-                newBox += '<li id="' + dropdownId + '-value-' + x + '" data-value="' + o[x].value +
-                    '" class="newdropdownitem"' +
-                    'onclick="$(\'#' + dropdownId + '\').ValueSelectBox(\'setValue\', \''+o[x].text +'\' ,\''+o[x].value+'\', '+ dropdownId +');">'+ o[x].text + '</li>';
+                if (o[x].className.indexOf('ignore') <= 0) {
+                    newBox += '<li id="' + dropdownId + '-value-' + x + '" data-value="' + o[x].value +
+                        '" class="newdropdownitem"' +
+                        'onclick="$(\'#' + dropdownId + '\').ValueSelectBox(\'setValue\', \'' + o[x].text + '\' ,\'' + o[x].value + '\', ' + dropdownId + ');">' + o[x].text + '</li>';
+                }
             }
 
   
@@ -40,6 +42,16 @@
             newBox += '</div>'
 
             this.replaceWith(newBox + this[0].outerHTML);
+
+            if ($('#' + dropdownId).is(':disabled'))
+            {
+                $('#' + dropdownId + '-dropdownbox').prop('disabled', true);
+                $('#' + dropdownId + '-valueBox').prop('disabled', true);
+                $('#' + dropdownId + '-textBox').prop('disabled', true);
+                $('#' + dropdownId + '-dropdownbox').prop('readonly', true);
+                $('#' + dropdownId + '-valueBox').prop('readonly', true);
+                $('#' + dropdownId + '-textBox').prop('readonly', true);
+            }
 
             $('#' + dropdownId + '-dropdownbox').css('width', $('#' + dropdownId + '-container').css('width'));
 
@@ -80,12 +92,15 @@
             });
 
             $('#' + dropdownId + '-container .dropdownboxcontainer div').bind("click", function () {
-                $(this).toggleClass("glyphicon glyphicon-chevron-down").toggleClass("glyphicon glyphicon-chevron-up");
-                var t = $('#' + dropdownId + '-container').scrollTop().top;
-                var l = $('#' + dropdownId + '-container').scrollLeft().left;
-                $('#' + dropdownId + '-dropdownbox').css('top', t);
-                $('#' + dropdownId + '-dropdownbox').css('left', l);
-                $(dropdownId).ValueSelectBox('show', '#' + dropdownId + '-dropdownbox');
+                var isdis = $('#' + dropdownId + '-textbox').is(":disabled");
+                if (!isdis) {
+                    $(this).toggleClass("glyphicon glyphicon-chevron-down").toggleClass("glyphicon glyphicon-chevron-up");
+                    var t = $('#' + dropdownId + '-container').scrollTop().top;
+                    var l = $('#' + dropdownId + '-container').scrollLeft().left;
+                    $('#' + dropdownId + '-dropdownbox').css('top', t);
+                    $('#' + dropdownId + '-dropdownbox').css('left', l);
+                    $(dropdownId).ValueSelectBox('show', '#' + dropdownId + '-dropdownbox');
+                }
             });
 
             $('#' + dropdownId + '-valueBox').bind("keyup", function (e) {
@@ -132,7 +147,7 @@
             $('#' + elementId + '-valueBox').val("");
             var reg = new RegExp(element[0].value, "i");
 
-            var o = $('#' + elementId + '-dropdownbox' + " ul li");
+            var o = $('#' + elementId + '-dropdownbox' + ' ul li:not(.ignore)');
 
             for (var index = 0; index < o.length; index++) {
                 var x = o[index].innerText.trim();
@@ -196,8 +211,8 @@
             $('#' + dropId + '-textbox').val(element.innerHTML);
             $('#' + dropId + '-valueBox').val(element.getAttribute("data-value"));
             $('#' + dropId).val(element.getAttribute("data-value"));
-            $('#' + dropdownId + '-dropdownbox').css('top', $('#' + dropId + '-textbox').scrollTop().top);
-            $('#' + dropdownId + '-dropdownbox').css('left', $('#' + dropId + '-textbox').scrollLeft().left);
+            $('#' + dropId + '-dropdownbox').css('top', $('#' + dropId + '-textbox').scrollTop().top);
+            $('#' + dropId + '-dropdownbox').css('left', $('#' + dropId + '-textbox').scrollLeft().left);
             $('#' + dropId + '-dropdownbox').toggle();
             $('#' + dropId + '-container .dropdownboxcontainer div').toggleClass("glyphicon glyphicon-chevron-down").toggleClass("glyphicon glyphicon-chevron-up");
         },
