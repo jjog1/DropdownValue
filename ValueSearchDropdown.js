@@ -17,7 +17,7 @@
             newBox += '<div class="dropdownboxcontainer">'
 
             newBox += '<input type="textbox" id="' + dropdownId + '-textbox" class="dropdowntextbox" value="'+sText+'"/>';
-            newBox += '<div class="glyphicon glyphicon-chevron-down" id="'+dropdownId + '-glyph"></div>';
+            newBox += '<div class="glyphicon glyphicon-chevron-down" id="'+glyphId +'"></div>';
             newBox += '<input type="textbox" id="' + dropdownId + '-valueBox" class="dropdownvaluebox" value="'+sValue+'">';
             //Close inputcontainer
             newBox += '</div>'
@@ -47,10 +47,15 @@
             {
                 $('#' + dropdownId + '-dropdownbox').prop('disabled', true);
                 $('#' + dropdownId + '-valueBox').prop('disabled', true);
-                $('#' + dropdownId + '-textBox').prop('disabled', true);
+                $('#' + dropdownId + '-textbox').prop('disabled', true);
                 $('#' + dropdownId + '-dropdownbox').prop('readonly', true);
                 $('#' + dropdownId + '-valueBox').prop('readonly', true);
-                $('#' + dropdownId + '-textBox').prop('readonly', true);
+                $('#' + dropdownId + '-textbox').prop('readonly', true);
+
+                $('#' + dropdownId + '-valueBox').addClass('disabledDropdown');
+                $('#' + dropdownId + '-textbox').addClass('disabledDropdown');
+                $('#' + dropdownId + '-container').addClass('disabledDropdown');
+                $('#' + dropdownId + '-container .dropdownboxcontainer div').addClass('disabledDropdown');
             }
 
             $('#' + dropdownId + '-dropdownbox').css('width', $('#' + dropdownId + '-container').css('width'));
@@ -68,6 +73,7 @@
                 }
             });
 
+            //Setup event listeners
             $('body').on('click', function (e) {
                 if (e.target.id != containerId
                     && e.target.id != dropdownboxId
@@ -77,20 +83,20 @@
                 {
                     if ($('#' + dropdownId + '-dropdownbox').is(':visible')) {
                         $('#' + dropdownId + '-dropdownbox').hide();
-                        $('#' + dropdownId + '-container .dropdownboxcontainer div').toggleClass("glyphicon glyphicon-chevron-down").toggleClass("glyphicon glyphicon-chevron-up");
+                        $('#' + dropdownId + '-container .dropdownboxcontainer div').addClass("glyphicon-chevron-down").removeClass("glyphicon-chevron-up");
                     }
                 }
             });
-
             $('#' + dropdownId + '-textbox').bind("keyup", function (e) {
                 if (e.keyCode != 9) {
                     $(dropdownId).ValueSelectBox('predictFromText', $('#' + dropdownId + '-textbox'), dropdownId, e);
-                }
+                    $('#' + dropdownId + '-container .dropdownboxcontainer div').removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
+                } 
                 if (e.keyCode == 13) {
+                    $('#' + dropdownId + '-container .dropdownboxcontainer div').addClass("glyphicon-chevron-down").removeClass("glyphicon-chevron-up");
                     e.stopPropagation();
                 }
             });
-
             $('#' + dropdownId + '-container .dropdownboxcontainer div').bind("click", function () {
                 var isdis = $('#' + dropdownId + '-textbox').is(":disabled");
                 if (!isdis) {
@@ -102,25 +108,23 @@
                     $(dropdownId).ValueSelectBox('show', '#' + dropdownId + '-dropdownbox');
                 }
             });
-
             $('#' + dropdownId + '-valueBox').bind("keyup", function (e) {
                 if (e.keyCode != 9) {
                     $(dropdownId).ValueSelectBox('predictFromValue', $('#' + dropdownId + '-valueBox'), dropdownId, e.keyCode);
+                } else {
+                    $('#' + dropdownId + '-container .dropdownboxcontainer div').addClass("glyphicon-chevron-down").removeClass("glyphicon-chevron-up");
                 }
                 if (e.keyCode == 13) {
                     e.stopPropagation();
                 }
             });
-
             $('#' + dropdownId + '-container .newdropdownitem').bind("click", function () {
                 $(dropdownId).ValueSelectBox('populate', this, dropdownId);
-                
+                $('#' + dropdownId + '-container .dropdownboxcontainer div').addClass("glyphicon-chevron-down").removeClass("glyphicon-chevron-up");
             });
-
             $('#' + dropdownId + '-container').bind("keyup", function (e) {
                 $(dropdownId).ValueSelectBox('changeSelect', dropdownId, e);
             });
-
             $('#' + dropdownId + '-valueBox').blur(function (e) {
                 $('#' + dropdownId + '-dropdownbox').hide();
                 $('#' + dropdownId).val($('#' + dropdownId + '-valueBox').val());
@@ -129,6 +133,7 @@
             $('#' + dropdownId + '-textbox').blur(function (e) {
                 $('#' + dropdownId + '-dropdownbox').hide();
             });
+            //End setup event listeners
         },
         setValue:function(text,v, ddid){
             $('#' + ddid.id + 'textbox').val(text);
@@ -214,7 +219,6 @@
             $('#' + dropId + '-dropdownbox').css('top', $('#' + dropId + '-textbox').scrollTop().top);
             $('#' + dropId + '-dropdownbox').css('left', $('#' + dropId + '-textbox').scrollLeft().left);
             $('#' + dropId + '-dropdownbox').toggle();
-            $('#' + dropId + '-container .dropdownboxcontainer div').toggleClass("glyphicon glyphicon-chevron-down").toggleClass("glyphicon glyphicon-chevron-up");
         },
         show: function (dropId) {
             $(dropId).toggle();
@@ -235,7 +239,7 @@
 
                 if (selectedRow.length == 0) {
                     o[0].className += " selectedItem";
-                    $('#' + elementId + '-container .dropdownboxcontainer div').toggleClass("glyphicon glyphicon-chevron-down").toggleClass("glyphicon glyphicon-chevron-up");
+                    $('#' + elementId + '-container .dropdownboxcontainer div').addClass("glyphicon-chevron-down").removeClass("glyphicon-chevron-up");
                 }
                 else {
                     var next = selectedRow.nextAll('li:visible')[0];
